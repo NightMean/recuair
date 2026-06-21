@@ -91,7 +91,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the sensor platform."""
     api: RecuairApi = hass.data[DOMAIN][entry.entry_id]
-    scan_interval = entry.data.get(CONF_SCAN_INTERVAL, 60)
+    scan_interval = entry.options.get(CONF_SCAN_INTERVAL, entry.data.get(CONF_SCAN_INTERVAL, 60))
 
     async def async_update_data():
         """Fetch data from API endpoint."""

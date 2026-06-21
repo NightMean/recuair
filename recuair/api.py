@@ -1,9 +1,14 @@
 """API for Recuair."""
+from http import HTTPStatus
 import logging
 import aiohttp
 from bs4 import BeautifulSoup
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class RecuairApiError(Exception):
+    """Error while communicating with Recuair."""
 
 class RecuairApi:
     """Recuair API."""
@@ -13,6 +18,49 @@ class RecuairApi:
         self._ip_address = ip_address
         self._url = f"http://{self._ip_address}/"
         self._session = session
+
+    async def _post_data(self, data: dict[str, str]) -> None:
+        """Send a POST request to the Recuair unit.
+
+        Recuair uses redirects to indicate success for settings writes.
+        """
+        try:
+            async with self._session.post(self._url, data=data, allow_redirects=False) as response:
+                if response.status not in (
+                    HTTPStatus.MOVED_PERMANENTLY,
+                    HTTPStatus.SEE_OTHER,
+                ):
+                    raise RecuairApiError(
+                        f"Unknown response status {response.status} for write operation"
+                    )
+        except aiohttp.ClientError as err:
+            raise RecuairApiError(f"Error writing to Recuair unit: {err}") from err
+
+    async def async_set_mode(self, mode: str) -> None:
+        """Set operation mode."""
+        await self._post_data({"mode": mode})
+
+    async def async_set_light(self, intensity: int, red: int, green: int, blue: int) -> None:
+        """Set light values.
+
+        Recuair requires full light payload even when only intensity changes.
+        """
+        await self._post_data(
+            {
+                "r": str(red),
+                "g": str(green),
+                "b": str(blue),
+                "intensity": str(intensity),
+            }
+        )
+
+    async def async_light_off(self) -> None:
+        """Turn light off."""
+        await self.async_set_light(intensity=0, red=0, green=0, blue=0)
+
+    async def async_reset_filters(self) -> None:
+        """Reset filter notification."""
+        await self._post_data({"filterNotification": "1"})
 
     async def get_data(self):
         """Get data from the Recuair unit."""
@@ -115,6 +163,22 @@ class RecuairApi:
                 data["light_intensity"] = int(intensity_input["value"])
             except (ValueError, TypeError):
                 pass
+
+        # Light Color
+        rgb_values = {}
+        for channel in ("r", "g", "b"):
+            channel_input = soup.find("input", {"name": channel})
+            if channel_input and channel_input.has_attr("value"):
+                try:
+                    rgb_values[channel] = int(channel_input["value"])
+                except (ValueError, TypeError):
+                    pass
+        if len(rgb_values) == 3:
+            data["light_rgb"] = (
+                rgb_values["r"],
+                rgb_values["g"],
+                rgb_values["b"],
+            )
 
         # Firmware Version
         fw_div = soup.find("div", string=lambda t: t and "fw:" in t)

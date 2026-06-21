@@ -7,7 +7,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .api import RecuairApi
 from .const import DOMAIN
 
-PLATFORMS = ["sensor"]
+PLATFORMS = ["sensor", "select", "number", "light"]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

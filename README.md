@@ -19,6 +19,12 @@ Once configured, the integration will create the following sensors in Home Assis
 - **Mode**: Current operating mode (e.g., AUTO, MANUAL)
 - **Light Intensity**: On-device light intensity level (0-5)
 
+It also provides control entities:
+
+- **Light**: Native Home Assistant light entity (`light.xxx`) with on/off, brightness and RGB color control
+- **Mode (Select)**: `auto`, `off`, `holiday`, `bypass`, `1`, `2`, `3`, `4`
+- **Light Intensity (Number)**: 0-5
+
 ## Setup
 
 1. **Copy Files**: Copy the `recuair` directory into your Home Assistant `custom_components` folder.

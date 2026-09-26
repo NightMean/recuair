@@ -3,14 +3,13 @@ from __future__ import annotations
 
 from homeassistant.components.number import NumberEntity, NumberMode
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import RecuairApi, RecuairApiError
-from .const import DOMAIN
+from .const import DOMAIN, MODEL
 
 
 async def async_setup_entry(
@@ -24,8 +23,8 @@ async def async_setup_entry(
         identifiers={(DOMAIN, entry.unique_id)},
         name=entry.title,
         manufacturer="Recuair",
-        model="DC40",
-        configuration_url=f"http://{entry.data[CONF_HOST]}",
+        model=MODEL,
+        configuration_url=api.configuration_url,
     )
     async_add_entities([RecuairLightIntensityNumber(api, entry, device_info)])
 

@@ -5,14 +5,13 @@ import re
 
 from homeassistant.components.select import SelectEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import RecuairApi, RecuairApiError
-from .const import DOMAIN, MODE_AUTO, MODE_OPTIONS
+from .const import DOMAIN, MODEL, MODE_AUTO, MODE_OPTIONS
 
 
 def _normalize_mode(mode: str) -> str | None:
@@ -47,8 +46,8 @@ async def async_setup_entry(
         identifiers={(DOMAIN, entry.unique_id)},
         name=entry.title,
         manufacturer="Recuair",
-        model="DC40",
-        configuration_url=f"http://{entry.data[CONF_HOST]}",
+        model=MODEL,
+        configuration_url=api.configuration_url,
     )
     async_add_entities([RecuairModeSelect(api, entry, device_info)])
 

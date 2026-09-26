@@ -7,12 +7,22 @@
           "host": "IP Address",
           "scan_interval": "Scan interval (seconds)"
         }
+      },
+      "discovery_confirm": {
+        "title": "Recuair device discovered",
+        "description": "Found {model} at {host}. Choose a scan interval and submit to add it.",
+        "data": {
+          "scan_interval": "Scan interval (seconds)"
+        }
       }
     },
     "error": {
       "cannot_connect": "Cannot connect to the device",
       "min_scan_interval": "Minimum scan interval is 60 seconds",
       "unknown": "Unknown error"
+    },
+    "abort": {
+      "cannot_connect": "Could not connect to the discovered Recuair device"
     }
   },
   "options": {

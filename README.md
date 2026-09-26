@@ -33,6 +33,8 @@ It also provides control entities:
 4. Restart Home Assistant to load the integration.
 5. Go to **Settings** > **Devices & Services**, select **Add Integration**, and search for **Recuair**.
 
+After installation, the DC40 should appear automatically in Home Assistant's discovered integrations. If it does not, add Recuair manually and enter its IP address.
+
 ## Configuration
 
 During the setup process, you will be prompted to enter the following information:

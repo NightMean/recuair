@@ -9,7 +9,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST, CONF_SCAN_INTERVAL
+from homeassistant.const import CONF_SCAN_INTERVAL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -20,7 +20,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN
+from .const import DOMAIN, MODEL
 from .api import RecuairApi
 
 _LOGGER = logging.getLogger(__name__)
@@ -117,8 +117,8 @@ async def async_setup_entry(
         identifiers={(DOMAIN, entry.unique_id)},
         name=entry.title,
         manufacturer="Recuair",
-        model="DC40",
-        configuration_url=f"http://{entry.data[CONF_HOST]}",
+        model=MODEL,
+        configuration_url=api.configuration_url,
     )
 
     entities = [

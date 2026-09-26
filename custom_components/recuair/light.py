@@ -9,7 +9,6 @@ from homeassistant.components.light import (
     LightEntity,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity import DeviceInfo
@@ -17,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util.color import color_hs_to_RGB
 
 from .api import RecuairApi, RecuairApiError
-from .const import DOMAIN
+from .const import DOMAIN, MODEL
 
 
 def _intensity_to_brightness(intensity: int) -> int:
@@ -41,8 +40,8 @@ async def async_setup_entry(
         identifiers={(DOMAIN, entry.unique_id)},
         name=entry.title,
         manufacturer="Recuair",
-        model="DC40",
-        configuration_url=f"http://{entry.data[CONF_HOST]}",
+        model=MODEL,
+        configuration_url=api.configuration_url,
     )
     async_add_entities([RecuairLight(api, entry, device_info)])
 

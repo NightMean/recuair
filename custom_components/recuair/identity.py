@@ -9,6 +9,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_HOST
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import format_mac
 
 from .const import DOMAIN
@@ -41,6 +42,59 @@ def mac_connection(entry: ConfigEntry) -> set[tuple[str, str]]:
     if _MAC_PATTERN.fullmatch(entry.unique_id.casefold()):
         return {(dr.CONNECTION_NETWORK_MAC, entry.unique_id.casefold())}
     return set()
+
+
+def migrate_sensor_entity_ids(
+    hass: HomeAssistant, entry: ConfigEntry, mac_address: str
+) -> None:
+    """Keep one sensor registry entry per sensor when IDs move to the device MAC."""
+    entity_registry = er.async_get(hass)
+    sensor_entries = er.async_entries_for_config_entry(
+        entity_registry, entry.entry_id
+    )
+    entries_by_key: dict[str, list[er.RegistryEntry]] = {}
+    for sensor_entry in sensor_entries:
+        if sensor_entry.platform != DOMAIN or sensor_entry.domain != "sensor":
+            continue
+        if "}_" in sensor_entry.unique_id:
+            _, sensor_key = sensor_entry.unique_id.rsplit("}_", 1)
+        else:
+            mac_prefix = f"{mac_address.casefold()}_"
+            if not sensor_entry.unique_id.casefold().startswith(mac_prefix):
+                continue
+            sensor_key = sensor_entry.unique_id[len(mac_prefix) :]
+        if sensor_key:
+            entries_by_key.setdefault(sensor_key, []).append(sensor_entry)
+
+    normalized_mac = mac_address.casefold()
+    for sensor_key, candidates in entries_by_key.items():
+        canonical_unique_id = f"{normalized_mac}_{sensor_key}"
+        keeper = next(
+            (
+                candidate
+                for candidate in candidates
+                if candidate.unique_id.casefold() == canonical_unique_id
+            ),
+            None,
+        )
+        if keeper is None:
+            keeper = next(
+                (
+                    candidate
+                    for candidate in candidates
+                    if normalized_mac not in candidate.unique_id.casefold()
+                ),
+                candidates[0],
+            )
+
+        for candidate in candidates:
+            if candidate.entity_id != keeper.entity_id:
+                entity_registry.async_remove(candidate.entity_id)
+
+        if keeper.unique_id != canonical_unique_id:
+            entity_registry.async_update_entity(
+                keeper.entity_id, new_unique_id=canonical_unique_id
+            )
 
 
 def async_update_entry_identity(

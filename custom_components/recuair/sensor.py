@@ -93,7 +93,7 @@ async def async_setup_entry(
     )
 
     entities = [
-        RecuairSensor(coordinator, description, device_info)
+        RecuairSensor(coordinator, entry, description, device_info)
         for description in SENSOR_TYPES
     ]
     async_add_entities(entities)
@@ -105,13 +105,14 @@ class RecuairSensor(CoordinatorEntity, SensorEntity):
     def __init__(
         self,
         coordinator: RecuairCoordinator,
+        entry: ConfigEntry,
         description: SensorEntityDescription,
         device_info: DeviceInfo,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.entity_description = description
-        self._attr_unique_id = f"{device_info['identifiers']}_{description.key}"
+        self._attr_unique_id = f"{entry.unique_id}_{description.key}"
         self._attr_device_info = device_info
 
     @property

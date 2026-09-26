@@ -12,6 +12,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .api import RecuairApiError
 from .const import DOMAIN, MODEL
 from .coordinator import RecuairCoordinator
+from .identity import mac_connection
 
 
 async def async_setup_entry(
@@ -23,6 +24,7 @@ async def async_setup_entry(
     coordinator: RecuairCoordinator = hass.data[DOMAIN][entry.entry_id]
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.unique_id)},
+        connections=mac_connection(entry),
         name=entry.title,
         manufacturer="Recuair",
         model=MODEL,

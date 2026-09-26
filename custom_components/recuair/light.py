@@ -19,6 +19,7 @@ from homeassistant.util.color import color_hs_to_RGB
 from .api import RecuairApiError
 from .const import DOMAIN, MODEL
 from .coordinator import RecuairCoordinator
+from .identity import mac_connection
 
 
 def _intensity_to_brightness(intensity: int) -> int:
@@ -40,6 +41,7 @@ async def async_setup_entry(
     coordinator: RecuairCoordinator = hass.data[DOMAIN][entry.entry_id]
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.unique_id)},
+        connections=mac_connection(entry),
         name=entry.title,
         manufacturer="Recuair",
         model=MODEL,

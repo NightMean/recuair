@@ -14,6 +14,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, MODEL
 from .coordinator import RecuairCoordinator
+from .identity import mac_connection
 
 SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
@@ -84,6 +85,7 @@ async def async_setup_entry(
 
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.unique_id)},
+        connections=mac_connection(entry),
         name=entry.title,
         manufacturer="Recuair",
         model=MODEL,

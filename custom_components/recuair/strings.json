@@ -18,11 +18,13 @@
     },
     "error": {
       "cannot_connect": "Cannot connect to the device",
+      "mac_not_found": "Home Assistant could not find this device's MAC address via DHCP",
       "min_scan_interval": "Minimum scan interval is 60 seconds",
       "unknown": "Unknown error"
     },
     "abort": {
-      "cannot_connect": "Could not connect to the discovered Recuair device"
+      "cannot_connect": "Could not connect to the discovered Recuair device",
+      "mac_not_found": "Waiting for Home Assistant to identify this device through DHCP"
     }
   },
   "options": {

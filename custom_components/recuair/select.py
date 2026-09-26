@@ -14,6 +14,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .api import RecuairApiError
 from .const import DOMAIN, MODEL, MODE_AUTO, MODE_OPTIONS
 from .coordinator import RecuairCoordinator
+from .identity import mac_connection
 
 
 def _normalize_mode(mode: str) -> str | None:
@@ -46,6 +47,7 @@ async def async_setup_entry(
     coordinator: RecuairCoordinator = hass.data[DOMAIN][entry.entry_id]
     device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.unique_id)},
+        connections=mac_connection(entry),
         name=entry.title,
         manufacturer="Recuair",
         model=MODEL,

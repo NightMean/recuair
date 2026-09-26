@@ -1,9 +1,9 @@
 {
   "domain": "recuair",
   "name": "Recuair",
-  "documentation": "https://github.com/pavelkrejsa/recuair-ha",
-  "issue_tracker": "https://github.com/pavelkrejsa/recuair-ha/issues",
-  "codeowners": ["@pavelkrejsa"],
+  "documentation": "https://github.com/NightMean/recuair",
+  "issue_tracker": "https://github.com/NightMean/recuair/issues",
+  "codeowners": ["@NightMean"],
   "config_flow": true,
   "iot_class": "local_polling",
   "version": "0.1.2",

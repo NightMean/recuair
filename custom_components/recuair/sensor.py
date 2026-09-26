@@ -93,7 +93,6 @@ async def async_setup_entry(
     entities = [
         RecuairSensor(coordinator, description, device_info)
         for description in SENSOR_TYPES
-        if coordinator.data and description.key in coordinator.data
     ]
     async_add_entities(entities)
 
